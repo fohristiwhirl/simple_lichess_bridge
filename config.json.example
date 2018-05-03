@@ -1,0 +1,6 @@
+{
+	"account":		"BotAccountName",
+	"token":		"xxxxxxxxxxxxxxxx",
+	"command":		["./stockfish.exe"],
+	"extras":		["setoption name Hash value 1024"]
+}
