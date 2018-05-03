@@ -308,7 +308,8 @@ def handle_challenge(challenge):
 	global active_game
 	global active_game_MUTEX
 
-	log("Incoming challenge from {} -- {} (rated: {})".format(challenge['challenger']['name'], challenge['timeControl']['show'], challenge['rated']))
+	log("Incoming challenge from {} -- {} (rated: {})".format(
+		challenge['challenger']['name'], challenge['timeControl']['show'], challenge['rated']))
 
 	accepting = True
 
