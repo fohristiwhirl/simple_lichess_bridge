@@ -84,11 +84,6 @@ class Game():
 			if not line:					# Filter out keep-alive newlines
 				continue
 
-			# Each line is a JSON object containing a type field. Possible values are:
-			#		gameFull	-- Full game data. All values are immutable, except for the state field.
-			#		gameState	-- Current state of the game. Immutable values not included.
-			#		chatLine 	-- Chat message sent by a user (or the bot itself) in the room "player" or "spectator".
-
 			dec = line.decode('utf-8')
 			j = json.loads(dec)
 
@@ -97,6 +92,8 @@ class Game():
 				self.gameFull = j
 
 				log(j)
+				
+				# The following lines can fail if the opponent is the built-in AI, hence try...
 
 				try:
 					if j["white"]["name"].lower() == config["account"].lower():
