@@ -2,5 +2,9 @@
 	"account":		"BotAccountName",
 	"token":		"xxxxxxxxxxxxxxxx",
 	"command":		["./stockfish.exe"],
-	"extras":		["setoption name Hash value 1024"]
+	"extras":		["setoption name Hash value 1024"],
+	"limit_min":	15,
+	"limit_max":	300,
+	"inc_min":		0,
+	"inc_max":		10
 }

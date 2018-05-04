@@ -92,7 +92,7 @@ class Game():
 				self.gameFull = j
 
 				log(j)
-				
+
 				# The following lines can fail if the opponent is the built-in AI, hence try...
 
 				try:
@@ -255,7 +255,7 @@ def main():
 	try:
 		with open("config.json") as config_file:
 			config = json.load(config_file)
-			for prop in ["account", "token", "command", "extras"]:
+			for prop in ["account", "token", "command", "extras", "limit_min", "limit_max", "inc_min", "inc_max"]:
 				if prop not in config:
 					print("config.json did not have needed '{}' property".format(prop))
 					sys.exit()
@@ -328,8 +328,16 @@ def handle_challenge(challenge):
 
 	if challenge["timeControl"]["type"] != "clock":
 		accepting = False
-	elif challenge["timeControl"]["limit"] > 300:
+	elif challenge["timeControl"]["limit"] < config["limit_min"]:
 		accepting = False
+	elif challenge["timeControl"]["limit"] > config["limit_max"]:
+		accepting = False
+	elif challenge["timeControl"]["increment"] < config["inc_min"]:
+		accepting = False
+	elif challenge["timeControl"]["increment"] > config["inc_max"]:
+		accepting = False
+
+	# Act...
 
 	if not accepting:
 		decline(challenge["id"])
