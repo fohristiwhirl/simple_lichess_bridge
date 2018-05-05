@@ -255,7 +255,7 @@ def main():
 	try:
 		with open("config.json") as config_file:
 			config = json.load(config_file)
-			for prop in ["account", "token", "command", "extras", "limit_min", "limit_max", "inc_min", "inc_max"]:
+			for prop in ["account", "token", "command", "extras", "limit_min", "limit_max", "inc_min", "inc_max", "blocked"]:
 				if prop not in config:
 					print("config.json did not have needed '{}' property".format(prop))
 					sys.exit()
@@ -336,6 +336,13 @@ def handle_challenge(challenge):
 		accepting = False
 	elif challenge["timeControl"]["increment"] > config["inc_max"]:
 		accepting = False
+
+	# Blocked players...
+
+	for blocked_player in config["blocked"]:
+		if blocked_player.lower() == challenge["challenger"]["name"].lower():
+			accepting = False
+			break
 
 	# Act...
 
