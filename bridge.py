@@ -44,6 +44,7 @@ class Engine():
 		self.process.stdin.flush()
 		log(self.shortname + " <- " + msg)
 
+
 	def get_best_move(self):
 
 		# Assumes the go command has already been sent
@@ -412,30 +413,26 @@ def log(msg):
 	main_log.put(msg)
 
 
-def stdout_to_queue(process, q):
-
+def process_output_to_queue(process, q, stderr_flag):
 	while 1:
-		z = process.stdout.readline().decode("utf-8")
-
+		if stderr_flag:
+			z = process.stderr.readline().decode("utf-8")
+		else:
+			z = process.stdout.readline().decode("utf-8")
 		if z == "":		# Only EOF gives this.
 			return
 		elif z.strip() == "":
 			pass
 		else:
 			q.put(z.strip())
+
+
+def stdout_to_queue(process, q):
+	process_output_to_queue(process, q, False)
 
 
 def stderr_to_queue(process, q):
-
-	while 1:
-		z = process.stderr.readline().decode("utf-8")
-
-		if z == "":		# Only EOF gives this.
-			return
-		elif z.strip() == "":
-			pass
-		else:
-			q.put(z.strip())
+	process_output_to_queue(process, q, True)
 
 
 def logger_thread(filename, q, also_print):
