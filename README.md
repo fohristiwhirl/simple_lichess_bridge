@@ -1,5 +1,6 @@
 Simple Lichess bridge for a UCI bot
 
-* Upgrade to bot account by editing and running `upgrade_account.py`
-* Create and edit `config.json` (see example for usage)
+* Create a new account and get an API token.
+* Edit `upgrade_account.py` with your API token; run it.
+* Create and edit `config.json` (see example file)
 * Run `bridge.py`
