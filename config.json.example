@@ -1,7 +1,7 @@
 {
 	"account":		"BotAccountName",
 	"token":		"xxxxxxxxxxxxxxxx",
-	"command":		["./stockfish.exe"],
+	"command":		["./super_engine.exe", "-t", "9000", "-x", "32"],
 	"extras":		["setoption name Hash value 1024", "setoption name Contempt value 0"],
 	"limit_min":	15,
 	"limit_max":	300,
