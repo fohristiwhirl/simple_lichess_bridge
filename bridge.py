@@ -24,18 +24,17 @@ class Engine():
 										stderr = subprocess.PIPE,
 										)
 
-		# Make a thread that puts this engine's stdout onto a queue which we read when needed...
-		# I forget why I bothered with this now. Seems redundant. I was probably worried about
-		# the pipe filling up.
+		# A thread will put stdout messages on a queue for us...
 
 		self.stdout_queue = queue.Queue()
-		threading.Thread(target = stdout_to_queue, args = (self.process, self.stdout_queue, self.shortname), daemon = True).start()
+		threading.Thread(target = stdout_to_queue, args = (self.process, self.stdout_queue), daemon = True).start()
 
-		# Make a thread that puts this engine's stderr into a log...
-		# I think it's necessary to do SOMETHING with stderr (so it doesn't build up and hang the engine).
-		# As an alternative, we could send it to devnull.
+		# Meanwhile, stderr messages will also be put on a queue but simply logged by a logger thread...
 
-		threading.Thread(target = stderr_to_log, args = (self.process, "{}_stderr.txt".format(self.shortname)), daemon = True).start()
+		stderr_queue = queue.Queue()
+		threading.Thread(target = stderr_to_queue, args = (self.process, stderr_queue), daemon = True).start()
+		threading.Thread(target = logger_thread, args = ("{}_stderr.txt".format(shortname), stderr_queue, False), daemon = True).start()
+
 
 	def send(self, msg):
 
@@ -272,7 +271,7 @@ def main():
 
 	# Start logging...
 
-	threading.Thread(target = logger_thread, args = ("log.txt", main_log), daemon = True).start()
+	threading.Thread(target = logger_thread, args = ("log.txt", main_log, True), daemon = True).start()
 	log("-- STARTUP -- at {} ".format(time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime())) + "-" * 40)
 
 	# Start engines...
@@ -413,13 +412,12 @@ def log(msg):
 	main_log.put(msg)
 
 
-def stdout_to_queue(process, q, shortname):
+def stdout_to_queue(process, q):
 
 	while 1:
 		z = process.stdout.readline().decode("utf-8")
 
-		if z == "":
-			log("WARNING: got EOF while reading from {}".format(shortname))
+		if z == "":		# Only EOF gives this.
 			return
 		elif z.strip() == "":
 			pass
@@ -427,21 +425,20 @@ def stdout_to_queue(process, q, shortname):
 			q.put(z.strip())
 
 
-def stderr_to_log(process, filename):
-
-	logfile = open(filename, "a")
+def stderr_to_queue(process, q):
 
 	while 1:
 		z = process.stderr.readline().decode("utf-8")
 
-		if z == "":
-			logfile.write("EOF" + "\n")
+		if z == "":		# Only EOF gives this.
 			return
+		elif z.strip() == "":
+			pass
 		else:
-			logfile.write(z)
+			q.put(z.strip())
 
 
-def logger_thread(filename, q):
+def logger_thread(filename, q, also_print):
 
 	logfile = open(filename, "a")
 
@@ -452,10 +449,10 @@ def logger_thread(filename, q):
 		try:
 
 			msg = q.get(block = False)
-
 			msg = str(msg).strip()
 			logfile.write(msg + "\n")
-			print(msg)
+			if also_print:
+				print(msg)
 
 		except queue.Empty:
 
