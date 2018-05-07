@@ -84,7 +84,7 @@ class Game():
 			if not line:					# Filter out keep-alive newlines
 				continue
 
-			dec = line.decode('utf-8')
+			dec = line.decode("utf-8")
 			j = json.loads(dec)
 
 			if j["type"] == "gameFull":
@@ -148,8 +148,8 @@ class Game():
 
 		log("-----------------")
 
-		engine.send("position {} moves {}".format(self.gameFull['initialFen'], state['moves']))
-		engine.send("go wtime {} btime {} winc {} binc {}".format(state["wtime"], state["btime"], state['winc'], state['binc']))
+		engine.send("position {} moves {}".format(self.gameFull["initialFen"], state["moves"]))
+		engine.send("go wtime {} btime {} winc {} binc {}".format(state["wtime"], state["btime"], state["winc"], state["binc"]))
 
 		move = engine.get_best_move()
 		log("Playing {}".format(move))
@@ -268,12 +268,12 @@ def main():
 		print("config.json seems to be illegal JSON")
 		sys.exit()
 
-	headers = {"Authorization": "Bearer {}".format(config['token'])}
+	headers = {"Authorization": "Bearer {}".format(config["token"])}
 
 	# Start logging...
 
 	threading.Thread(target = logger_thread, args = ("log.txt", main_log, True), daemon = True).start()
-	log("-- STARTUP -- at {} ".format(time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime())) + "-" * 40)
+	log("-- STARTUP -- at {} ".format(time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())) + "-" * 40)
 
 	# Start engines...
 
@@ -291,7 +291,7 @@ def main():
 
 		if line:
 
-			dec = line.decode('utf-8')
+			dec = line.decode("utf-8")
 			j = json.loads(dec)
 
 			if j["type"] == "challenge":
@@ -309,7 +309,7 @@ def handle_challenge(challenge):
 	global active_game_MUTEX
 
 	log("Incoming challenge from {} -- {} (rated: {})".format(
-		challenge['challenger']['name'], challenge['timeControl']['show'], challenge['rated']))
+		challenge["challenger"]["name"], challenge["timeControl"]["show"], challenge["rated"]))
 
 	accepting = True
 
@@ -362,6 +362,7 @@ def decline(challengeId):
 		except:
 			log("decline returned {}".format(r.status_code))
 
+
 def accept(challengeId):
 
 	log("Accepting challenge {}".format(challengeId))
@@ -371,6 +372,7 @@ def accept(challengeId):
 			log(r.json())
 		except:
 			log("accept returned {}".format(r.status_code))
+
 
 def start_game(gameId):
 
