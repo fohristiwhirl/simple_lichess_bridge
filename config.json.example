@@ -7,5 +7,6 @@
 	"limit_max":	300,
 	"inc_min":		0,
 	"inc_max":		10,
+	"variants":		["standard"],
 	"blocked":		["LeelaChess", "DrDrunkenstein"]
 }

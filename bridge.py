@@ -255,7 +255,7 @@ def main():
 	try:
 		with open("config.json") as config_file:
 			config = json.load(config_file)
-			for prop in ["account", "token", "command", "extras", "limit_min", "limit_max", "inc_min", "inc_max", "blocked"]:
+			for prop in ["account", "token", "command", "extras", "limit_min", "limit_max", "inc_min", "inc_max", "variants", "blocked"]:
 				if prop not in config:
 					print("config.json did not have needed '{}' property".format(prop))
 					sys.exit()
@@ -321,7 +321,17 @@ def handle_challenge(challenge):
 
 	# Variants...
 
-	if challenge["variant"]["key"] != "standard":
+	variant_ok = False
+
+	for variant in config["variants"]:
+		if variant.lower() == challenge["variant"]["key"].lower():
+			variant_ok = True
+		if variant.lower() == challenge["variant"]["name"].lower():
+			variant_ok = True
+		if variant.lower() == challenge["variant"]["short"].lower():
+			variant_ok = True
+
+	if not variant_ok:
 		accepting = False
 
 	# Time control...
